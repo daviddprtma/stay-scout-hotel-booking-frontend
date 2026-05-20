@@ -2,9 +2,9 @@ import axios from "axios";
 import CryptoJS from "crypto-js";
 
 export default class ApiService {
-  static BASE_URL = process.env.BASE_URL;
+  static BASE_URL = process.env.REACT_APP_BASE_URL;
 
-  static ENCRYPTION_KEY = process.env.ENCRYPTION_KEY;
+  static ENCRYPTION_KEY = process.env.REACT_APP_ENCRYPTION_KEY;
 
   // encrypt data using crypto js
   static encryptData(data) {
@@ -69,7 +69,7 @@ export default class ApiService {
   static async registerUser(registrationData) {
     const response = await axios.post(
       `${this.BASE_URL}/auth/register`,
-      this.registrationData,
+      registrationData,
     );
     return response.data;
   }
@@ -77,7 +77,7 @@ export default class ApiService {
   static async loginUser(loginData) {
     const response = await axios.post(
       `${this.BASE_URL}/auth/login`,
-      this.loginData,
+      loginData,
     );
     return response.data;
   }
