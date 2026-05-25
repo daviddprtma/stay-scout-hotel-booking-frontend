@@ -100,7 +100,7 @@ const RegisterPage = () => {
         <div className="form-group">
           <label htmlFor="Phone Number">Phone Number</label>
           <input
-            type="number"
+            type="text"
             name="phoneNumber"
             placeholder="Phone Number"
             value={formData.phoneNumber}
