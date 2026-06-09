@@ -75,10 +75,7 @@ export default class ApiService {
   }
 
   static async loginUser(loginData) {
-    const response = await axios.post(
-      `${this.BASE_URL}/auth/login`,
-      loginData,
-    );
+    const response = await axios.post(`${this.BASE_URL}/auth/login`, loginData);
     return response.data;
   }
 
@@ -122,7 +119,8 @@ export default class ApiService {
 
   static async getAllRooms() {
     const response = await axios.get(`${this.BASE_URL}/rooms/all`);
-    return response.data;
+    // dapatkan response dalam bentuk list
+    return Array.isArray(response.data) ? response.data : [];
   }
 
   static async getRoomById(roomId) {
@@ -151,9 +149,13 @@ export default class ApiService {
   }
 
   static async getAvailableRooms(checkInDate, checkOutDate, roomType) {
-    const response = await axios.get(
-      `${this.BASE_URL}/rooms/available?checkinDate=${checkInDate}&checkoutDate=${checkOutDate}&roomType=${roomType}`,
-    );
+    const response = await axios.get(`${this.BASE_URL}/rooms/available`, {
+      params: {
+        checkInDate,
+        checkOutDate,
+        roomType,
+      },
+    });
     return response.data;
   }
 

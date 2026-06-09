@@ -9,6 +9,32 @@ const RoomSearch = ({ handleSearchResult }) => {
   const [roomTypes, setRoomTypes] = useState([]);
   const [error, setError] = useState("");
 
+  const getRoomTypeLabel = (type) =>
+    typeof type === "string"
+      ? type
+      : (type?.name ?? type?.roomType ?? type?.type ?? type?.label ?? "");
+
+  const getRoomTypeValue = (type) =>
+    typeof type === "string"
+      ? type
+      : (type?.name ?? type?.roomType ?? type?.type ?? type?.label ?? "");
+
+  const getAvailableRoomsList = (response) => {
+    if (Array.isArray(response)) {
+      return response;
+    }
+
+    if (Array.isArray(response?.listRoom)) {
+      return response.listRoom;
+    }
+
+    // if (Array.isArray(response?.rooms)) {
+    //   return response.rooms;
+    // }
+
+    return [];
+  };
+
   // state for controlling the visibility of the date picker
   const [isStartDatePickerVisible, setStartDatePickerVisible] = useState(false);
   const [isEndDatePickerVisible, setEndDatePickerVisible] = useState(false);
@@ -21,7 +47,7 @@ const RoomSearch = ({ handleSearchResult }) => {
     const fetchRoomTypes = async () => {
       try {
         const response = await ApiService.getRoomTypes();
-        setRoomTypes(response);
+        setRoomTypes(Array.isArray(response) ? response : []);
       } catch (error) {
         console.error("Error fetching room types:", error);
       }
@@ -73,15 +99,22 @@ const RoomSearch = ({ handleSearchResult }) => {
         formatEndDate,
         roomType,
       );
-      if (response.status === 200) {
-        if (response.rooms.length === 0) {
+      const availableRooms = getAvailableRoomsList(response);
+
+      if (response?.status === 200 || response?.statusCode === 200 || availableRooms.length > 0) {
+        if (availableRooms.length === 0) {
           showError(
             "Room not currently available. Please try different dates or room type.",
           );
           return;
         }
-        handleSearchResult(response.rooms);
+        handleSearchResult(availableRooms);
         setError("");
+      } else if (response?.status === 404 || availableRooms.length === 0) {
+        showError(
+          "Room not currently available. Please try different dates or room type.",
+        );
+        return;
       }
     } catch (error) {
       showError(error?.response?.data?.message || error.message);
@@ -150,8 +183,11 @@ const RoomSearch = ({ handleSearchResult }) => {
               Select room type
             </option>
             {roomTypes.map((type) => (
-              <option key={type.id} value={type.name}>
-                {type.name}
+              <option
+                key={getRoomTypeValue(type)}
+                value={getRoomTypeValue(type)}
+              >
+                {getRoomTypeLabel(type)}
               </option>
             ))}
           </select>
