@@ -5,6 +5,7 @@ import Footer from "./component/common/Footer";
 import RegisterPage from "./component/auth/Register";
 import LoginPage from "./component/auth/Login";
 import HomePage from "./component/home/HomePage";
+import AllRoomsPage from "./component/booking_rooms/AllRoomsPage";
 
 function App() {
   return (
@@ -19,6 +20,8 @@ function App() {
             <Route path="/login" element={<LoginPage />} />
             {/* Home page */}
             <Route exact path="/home" element={<HomePage />} />
+            {/* Rooms page */}
+            <Route path="/rooms" element={<AllRoomsPage />} />
           </Routes>
         </div>
         <Footer />

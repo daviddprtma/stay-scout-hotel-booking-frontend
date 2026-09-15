@@ -112,15 +112,30 @@ export default class ApiService {
     return response.data;
   }
 
+  // ambil list dari response yang bisa berupa array langsung
+  // atau dibungkus object seperti { status, message, listRoom: [...] }
+  static toList(data) {
+    if (Array.isArray(data)) {
+      return data;
+    }
+    if (data && typeof data === "object") {
+      const list = Object.values(data).find((value) => Array.isArray(value));
+      if (Array.isArray(list)) {
+        return list;
+      }
+    }
+    return [];
+  }
+
   static async getRoomTypes() {
     const response = await axios.get(`${this.BASE_URL}/rooms/types`);
-    return response.data;
+    return this.toList(response.data);
   }
 
   static async getAllRooms() {
     const response = await axios.get(`${this.BASE_URL}/rooms/all`);
     // dapatkan response dalam bentuk list
-    return Array.isArray(response.data) ? response.data : [];
+    return this.toList(response.data);
   }
 
   static async getRoomById(roomId) {

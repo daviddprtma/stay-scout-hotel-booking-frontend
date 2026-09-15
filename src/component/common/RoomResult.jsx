@@ -7,18 +7,25 @@ const RoomResult = ({ roomSearchResult = [], handleSearchResult }) => {
   const isAdmin = ApiService.isAdmin();
   const rooms = roomSearchResult ?? handleSearchResult ?? [];
 
+  const getImageUrl = (room) => {
+    const image = Array.isArray(room.imageUrl)
+      ? room.imageUrl[0]
+      : room.imageUrl;
+    return image ?? "";
+  };
+
   return (
     <section className="room-results">
       <div className="room-list">
         {rooms.map((room) => (
           <div key={room.id} className="room-list-item">
             <img
-              src={room.imageUrl}
+              src={getImageUrl(room)}
               alt={room.roomNumber}
               className="room-list-item-image"
             />
             <div className="room-details">
-              <h3>{room.type}</h3>
+              <h3>{room.roomType ?? room.type}</h3>
               <p>Price: IDR {room.pricePerNight?.toLocaleString('id-ID')} / Night</p>
               <p>Description: {room.description}</p>
             </div>
