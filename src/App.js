@@ -6,6 +6,9 @@ import RegisterPage from "./component/auth/Register";
 import LoginPage from "./component/auth/Login";
 import HomePage from "./component/home/HomePage";
 import AllRoomsPage from "./component/booking_rooms/AllRoomsPage";
+import RoomDetailsPage from "./component/booking_rooms/RoomDetailsPage";
+import { CustomerRouter } from "./service/Guard";
+import FindBookingPage from "./component/booking_rooms/FindBookingPage";
 
 function App() {
   return (
@@ -22,6 +25,10 @@ function App() {
             <Route exact path="/home" element={<HomePage />} />
             {/* Rooms page */}
             <Route path="/rooms" element={<AllRoomsPage />} />
+            {/* find booking */}
+            <Route path="/find-bookings" element={<FindBookingPage />} />
+            {/* room details */}
+            <Route path="/room-details/:roomId" element={<CustomerRouter element={<RoomDetailsPage />} />} />
           </Routes>
         </div>
         <Footer />

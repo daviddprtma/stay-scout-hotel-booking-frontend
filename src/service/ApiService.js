@@ -56,7 +56,7 @@ export default class ApiService {
   }
 
   static getHeader() {
-    const token = this.getToken();
+    const token = this.retrieveToken();
     return {
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
@@ -127,6 +127,24 @@ export default class ApiService {
     return [];
   }
 
+  // ambil satu object dari response yang bisa berupa object langsung
+  // atau dibungkus seperti { status, message, room: {...} }
+  static toObject(data, ...keys) {
+    if (!data || typeof data !== "object" || Array.isArray(data)) {
+      return null;
+    }
+    for (const key of keys) {
+      const value = data[key];
+      if (value && typeof value === "object" && !Array.isArray(value)) {
+        return value;
+      }
+    }
+    // response sudah berupa object-nya sendiri
+    const isPayload =
+      data.id !== undefined || data.bookingReference !== undefined;
+    return isPayload ? data : null;
+  }
+
   static async getRoomTypes() {
     const response = await axios.get(`${this.BASE_URL}/rooms/types`);
     return this.toList(response.data);
@@ -140,7 +158,8 @@ export default class ApiService {
 
   static async getRoomById(roomId) {
     const response = await axios.get(`${this.BASE_URL}/rooms/${roomId}`);
-    return response.data;
+    // kembalikan object room-nya langsung, konsisten dengan getAllRooms
+    return this.toObject(response.data, "room", "data");
   }
 
   static async deleteRoom(roomId) {
@@ -179,7 +198,8 @@ export default class ApiService {
     const response = await axios.get(
       `${this.BASE_URL}/bookings/${bookingCode}`,
     );
-    return response.data;
+    // kembalikan object booking-nya langsung, konsisten dengan getRoomById
+    return this.toObject(response.data, "booking", "data");
   }
 
   static async bookRoom(booking) {
